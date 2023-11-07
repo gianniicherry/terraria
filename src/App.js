@@ -1,11 +1,19 @@
 import './App.css';
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 
 
 function App() {
   const [characterName, setCharacterName] = useState("")
   const [classType, setClassType] = useState("Warrior")
   const [weapon, setWeaponType] = useState("")
+  const [roles, setRoles] = useState([])
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:5000/api/roles')  // Adjust the URL to match your Flask route
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error('Error fetching roles:', error));
+  }, []);
 
   return (
     <div className="App">

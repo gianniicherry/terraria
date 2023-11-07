@@ -1,9 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask import jsonify
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'  # SQLite database URL
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -31,6 +34,13 @@ class Story(db.Model):
 def create_db():
     db.create_all()  # Creates the database and tables based on the models
     return 'Database created successfully!'
+
+
+@app.route('/api/roles', methods=['GET'])
+def get_roles():
+    roles = Role.query.all()  # Assuming you have a Role model
+    role_data = [{'id': role.id, 'name': role.name, 'description': role.description} for role in roles]
+    return jsonify(role_data)
 
 if __name__ == '__main__':
     app.run()
