@@ -7,6 +7,8 @@ function App() {
   const [weapon, setWeaponType] = useState('');
   const [roles, setRoles] = useState([]);
   const [roleDescription, setRoleDescription] = useState('');
+  const [characterSelected, setCharacterSelected] = useState(false)
+  const [response, setResponse] = useState('');
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/api/roles')
@@ -25,7 +27,19 @@ function App() {
     }
   };
 
+  function onCharacterSelect(){
+    setCharacterSelected(characterSelected => !characterSelected)
+  }
+
+  function findRegions(){
+    fetch('http://127.0.0.1:5000/api/get_regions')
+    .then((response) => response.json())
+    .then(data => console.log(data))
+  }
+
   return (
+    <div>
+    { characterSelected ?
     <div className="App">
       <form>
         <label>Enter your Character Name:</label>
@@ -49,8 +63,18 @@ function App() {
       </form>
           {classType}
       {roleDescription && (
-        <p>Selected Role Description: {roleDescription}</p>
+        <p>Role Description: {roleDescription}</p>
       )}
+      <button onClick={onCharacterSelect}>Next</button>
+    </div>
+    :
+    <div>
+      <p>{characterName}</p>
+      <p>{classType}</p>
+      <button onClick={onCharacterSelect}>Back</button>
+      <button onClick={findRegions}>Submit</button>
+    </div>
+    }
     </div>
   );
 }
