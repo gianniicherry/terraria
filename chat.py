@@ -1,31 +1,22 @@
 # chat.py
-from flask import Flask, jsonify
 from decouple import config
 import openai
 
-app = Flask(__name__)
 
 api_key = config("OPENAI_API_KEY")
 openai.api_key = api_key
 
-def generate_regions():
-    completion = openai.chat.completions.create(
-        model="gpt-3.5-turbo",
+content = "you are randomly generating 6 individual fantasy regions for a user, please provide a region name and a description."
+
+completion = openai.chat.completions.create(
+        model="gpt-4-1106-preview",
         messages=[
-            {"role": "system", "content": "You are telling a Fantasy story based on a user's choices"},
-            {"role": "user", "content": "Return six randomly generated regions. Please return the name of the region and a description of each region"}
+            {"role":"system", "content": "Generate JSON response"},
+            {"role": "user", "content": content}
         ],
+        response_format={"type": "json_object"}
     )
-    return completion.choices[0].message
+print(completion.choices[0].message.content)
 
-# Define a Flask route in the same file
-@app.route('/api/get_regions', methods=["GET"])
-def get_regions():
-    try:
-        response = generate_regions()
-        return jsonify({'response': response})
-    except Exception as e:
-        return jsonify({'error': str(e)})
 
-if __name__ == '__main__':
-    app.run(debug=True)
+

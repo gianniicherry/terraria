@@ -32,7 +32,7 @@ function App() {
   }
 
   function findRegions(){
-    fetch('http://127.0.0.1:5000/api/get_regions')
+    fetch('http://127.0.0.1:5000/api/regions')
     .then((response) => response.json())
     .then(data => console.log(data))
   }

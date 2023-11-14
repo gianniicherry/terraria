@@ -5,6 +5,8 @@ from flask import jsonify
 from flask_cors import CORS
 from decouple import config
 import openai
+import subprocess
+
 
 
 
@@ -48,6 +50,16 @@ def get_roles():
     roles = Role.query.all()  
     role_data = [{'id': role.id, 'name': role.name, 'description': role.description} for role in roles]
     return jsonify(role_data)
+
+@app.route('/api/regions', methods=['GET'])
+def generate_regions():
+    # Modify the subprocess call to run your chat.py script
+    result = subprocess.run(["python", "chat.py"], capture_output=True, text=True)
+
+    # Get the printed content from the subprocess result
+    printed_content = result.stdout.strip()
+
+    return printed_content
 
 
 if __name__ == '__main__':
