@@ -58,6 +58,24 @@ function App() {
     console.log(characterName)
     console.log(classType)
     console.log(region)
+
+    const newCharacter = {
+      name: characterName,
+      weapon: weapon,
+      role_name: classType
+    }
+    {/*must add region to character model, 
+    create weapon input on react, and create a 
+    response script through OpenAi 
+    to fetch newly created character and return response*/}
+    fetch('http://127.0.0.1:5000/api/characters', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newCharacter)
+    })
+    .then(r => r.json())
+    .then(data => console.log(data))
+
   }
 
   return (
@@ -112,11 +130,13 @@ function App() {
           </ul>
         )}
       </div>
-      Take character name, classType, and region
-      submit Post request to Character and role, 
       <div>
+        { region === null ? <div></div> : ( <div>
         <h3>Ready to Start your Journey?</h3>
-        <button onClick={startJourney()}>Start</button>
+        <button>Start</button>
+        </div>
+        )
+         }
       </div>
     </div>
   );
