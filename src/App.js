@@ -8,7 +8,9 @@ function App() {
   const [roles, setRoles] = useState([]);
   const [roleDescription, setRoleDescription] = useState('');
   const [characterSelected, setCharacterSelected] = useState(false)
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [region, setRegion] = useState(null)
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/api/roles')
@@ -31,10 +33,31 @@ function App() {
     setCharacterSelected(characterSelected => !characterSelected)
   }
 
-  function findRegions(){
+  function findRegions() {
+    setLoading(true);
+
     fetch('http://127.0.0.1:5000/api/regions')
-    .then((response) => response.json())
-    .then(data => console.log(data))
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data.regions)
+        setResponse(data.regions);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching regions:', error);
+        setLoading(false);
+      });
+  }
+
+  function handleRegionSelect(land){
+    setRegion(land)
+    console.log(region)
+  }
+
+  function startJourney(){
+    console.log(characterName)
+    console.log(classType)
+    console.log(region)
   }
 
   return (
@@ -69,12 +92,32 @@ function App() {
     </div>
     :
     <div>
-      <p>{characterName}</p>
-      <p>{classType}</p>
+      <p>Character Name: {characterName}</p>
+      <p> Class: {classType}</p>
       <button onClick={onCharacterSelect}>Back</button>
-      <button onClick={findRegions}>Submit</button>
+     <button onClick={findRegions}>Submit</button> 
     </div>
     }
+     <div>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <ul>
+            {response.map((r) => (
+              <li key={r.name}
+              onClick= {()=> handleRegionSelect(r)}
+              style={{ cursor: 'pointer', backgroundColor: region === r ? 'lightblue' : 'white' }}
+              >{r.name} <p key={r.description}>{r.description}</p></li>
+            ))}
+          </ul>
+        )}
+      </div>
+      Take character name, classType, and region
+      submit Post request to Character and role, 
+      <div>
+        <h3>Ready to Start your Journey?</h3>
+        <button onClick={startJourney()}>Start</button>
+      </div>
     </div>
   );
 }

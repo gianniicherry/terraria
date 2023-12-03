@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask import jsonify
+from flask import jsonify, request
 from flask_cors import CORS
 from decouple import config
 import openai
@@ -60,6 +60,34 @@ def generate_regions():
     printed_content = result.stdout.strip()
 
     return printed_content
+
+@app.route('/api/characters', methods=['POST'])
+def create_character():
+    data = request.json
+
+    # Extract character information from the request data
+    name = data.get('name')
+    weapon = data.get('weapon')
+    role_name = data.get('role_name')
+    region = data.get('region')
+
+    # Validate that required fields are present
+    if not name or not weapon or not role_name or not region:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    # Check if the specified role exists by name
+    role = Role.query.filter_by(name=role_name).first()
+    if not role:
+        return jsonify({'error': 'Role not found'}), 404
+
+    # Create a new character instance with the role_id
+    character = Character(name=name, weapon=weapon, role_id=role.id)
+
+    # Add the character to the database
+    db.session.add(character)
+    db.session.commit()
+
+    return jsonify({'message': 'Character created successfully'}), 201
 
 
 if __name__ == '__main__':
